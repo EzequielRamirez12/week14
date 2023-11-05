@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movie Review System</title>
+  <style>
+    .movie {
+      border: 1px solid #0db792;
+      padding: 10px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Movie Review System</h1>
+    <div id="movie-list">
+      
+    </div>
+  </div>
+
+  <script>
+    
+    const movies = [
+      { id: 1, title: 'Harry Potter ', rating: 0, reviews: [] },
+      { id: 2, title: 'Carz 2', rating: 0, reviews: [] },
+    ];
+
+    function renderStars(starCount) {
+      const stars = '⭐'.repeat(starCount);
+      return stars;
+    }
+
+    function renderReviewList(reviews) {
+      const reviewList = document.createElement('ul');
+      reviews.forEach((review) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = review;
+        reviewList.appendChild(listItem);
+      });
+      return reviewList;
+    }
+
+    function renderMovie(movie) {
+      const movieElement = document.createElement('div');
+      movieElement.className = 'movie';
+      movieElement.innerHTML = `
+        <h2>${movie.title}</h2>
+        <p>Rating: ${renderStars(movie.rating)}</p>
+        <div id="review-list-${movie.id}"></div>
+        <input type="number" id="rating-input-${movie.id}" min="1" max="5">
+        <button onclick="addReview(${movie.id})">Add Review</button>
+      `;
+      const reviewList = renderReviewList(movie.reviews);
+      const reviewContainer = movieElement.querySelector(`#review-list-${movie.id}`);
+      reviewContainer.appendChild(reviewList);
+
+      return movieElement;
+    }
+
+    function renderMovies() {
+      const movieList = document.getElementById('movie-list');
+      movieList.innerHTML = '';
+      movies.forEach((movie) => {
+        const movieElement = renderMovie(movie);
+        movieList.appendChild(movieElement);
+      });
+    }
+
+    function addReview(movieId) {
+      const review = prompt('Leave a review:');
+      if (review) {
+        const movie = movies.find((m) => m.id === movieId);
+        const ratingInput = document.getElementById(`rating-input-${movie.id}`);
+        const rating = parseInt(ratingInput.value);
+        if (rating >= 1 && rating <= 5) {
+          movie.reviews.push(`Rating: ${rating} stars - ${review}`);
+          movie.rating = (movie.rating * movie.reviews.length + rating) / (movie.reviews.length + 1);
+          renderMovies();
+        } else {
+          alert('Please enter a valid rating between 1 and 5.');
+        }
+      }
+    }
+
+   
+    renderMovies();
+  </script>
+</body>
+</html>
